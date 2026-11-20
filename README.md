@@ -27,7 +27,7 @@ src/banana_ripeness/
   evaluation.py        accuracy, precision/recall/F1 macro, bootstrap std, ma trận nhầm lẫn
   experiment.py        run_experiment / run_grid / load_results / compare_table
 scripts/               preprocess.py, train.py, compare.py (cùng code với notebook)
-notebooks/             01_eda, 02_preprocessing, 10_svm, 20_hog, 30_resnet18, 90_compare
+notebooks/             eda, preprocessing, svm_color_histogram, hog_svm, resnet18_gradcam, compare_results
                        (chỉ import và gọi hàm), legacy/ = notebook cũ để đối chiếu
 tests/                 pytest trên dữ liệu giả
 ```
@@ -37,12 +37,12 @@ tests/                 pytest trên dữ liệu giả
 Mọi lần chạy thật đều trên Kaggle. Notebook nào cũng mở đầu bằng cell setup tự `git clone` repo này vào `/tmp`
 (cần bật **Settings → Internet = On**).
 
-1. **Tiền xử lý (1 lần cho cả nhóm):** `notebooks/02_preprocessing.ipynb`, Add Input 3 dataset
+1. **Tiền xử lý (1 lần cho cả nhóm):** `notebooks/preprocessing.ipynb`, Add Input 3 dataset
    (`anhnguyen7508/bananaid`, `anhnguyen7508/bananaimagebd`, `kimlunl/bananaripeness-github`).
    Chạy hết → Save Version → Output → **New Dataset** (vd. `banana-preprocessed`).
-2. **Mỗi người chạy notebook của mình** (`10_…`, `20_…`, `30_…`) với Add Input = dataset ở bước 1.
+2. **Mỗi người chạy notebook của mình** (`svm_color_histogram`, `hog_svm`, `resnet18_gradcam`) với Add Input = dataset ở bước 1.
    Kết quả nằm ở `/kaggle/working/results/<run_name>/`. Chạy xong → Save Version.
-3. **So sánh:** `notebooks/90_compare_results.ipynb`, Add Input = output của các notebook 10/20/30.
+3. **So sánh:** `notebooks/compare_results.ipynb`, Add Input = output của 3 notebook mô hình.
    `load_results()` gộp mọi `result.json` → bảng `mean ± std` cho slide.
 
 Sửa code → push lên GitHub → chạy lại cell setup (tự `git pull`) là notebook dùng code mới.

@@ -64,7 +64,7 @@
 | `experiment.py` | xong: `run_experiment`, `run_grid` (resume, bỏ lần đã chạy), `load_results` (gộp mọi result.json), `summarize_runs` (std giữa seed), `compare_table`, `plot_comparison`, `best_run` (chọn theo val), `prediction_grid` |
 | `configs/experiments.yaml` | xong: luan = 8 SVM + 4 KNN; nguyen/quynh = ví dụ |
 | `scripts/train.py`, `scripts/compare.py` | xong |
-| `notebooks/02, 10, 20, 30, 90` | xong (10 và 90 đã chạy thử trên dữ liệu giả); `01_eda` + `legacy/` chép từ notebook cũ |
+| `notebooks/` `preprocessing`, `svm_color_histogram`, `hog_svm`, `resnet18_gradcam`, `compare_results` | xong (`svm_color_histogram`, `compare_results` đã chạy thử trên dữ liệu giả); `eda` + `legacy/` chép từ notebook cũ |
 | `tests/` | **15 test pass** (`pytest -q`, ~1.5 phút) |
 
 Output của preprocessing (`cfg.output_dir`):
@@ -82,11 +82,11 @@ mask_fallback, hue_thumb, hue_masked, md5, w, h, src_folder, src_path`.
 
 ## 4. Việc còn lại (theo thứ tự)
 
-1. **Chạy `02_preprocessing` trên Kaggle**, lưu output thành Kaggle Dataset (vd. `banana-preprocessed`), xem cảnh báo
+1. **Chạy `preprocessing.ipynb` trên Kaggle**, lưu output thành Kaggle Dataset (vd. `banana-preprocessed`), xem cảnh báo
    + `reports/mask_qa.png`, `hash64_disagreement_review.png` (mục 5).
-2. **Chạy `10_svm_color_histogram` trên Kaggle** (Luân) → Save Version. Lấy bảng cho slide 8.
-3. Nguyên / Quỳnh hoàn thiện khung (issue #1, #2 trên GitHub) rồi chạy `20_…`, `30_…`.
-4. `90_compare_results`: Add Input = output 3 notebook → bảng chung + biểu đồ → commit `reports/*.csv` nhỏ.
+2. **Chạy `svm_color_histogram.ipynb` trên Kaggle** (Luân) → Save Version. Lấy bảng cho slide 8.
+3. Nguyên / Quỳnh hoàn thiện khung (issue #1, #2 trên GitHub) rồi chạy `hog_svm.ipynb`, `resnet18_gradcam.ipynb`.
+4. `compare_results.ipynb`: Add Input = output 3 notebook → bảng chung + biểu đồ → commit `reports/*.csv` nhỏ.
 
 ## 5. Vấn đề dữ liệu CẦN BÁO NHÓM SỚM
 

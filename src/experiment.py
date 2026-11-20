@@ -356,7 +356,7 @@ def records_to_frame(records: Iterable[dict]) -> pd.DataFrame:
 def load_results(paths: str | Path | Sequence[str | Path] | None = None) -> pd.DataFrame:
     """Gộp kết quả của MỌI người (mọi result.json tìm được) thành 1 bảng.
 
-    Trên Kaggle: gắn output của các notebook 10/20/30 làm Input của notebook so sánh rồi gọi
+    Trên Kaggle: gắn output của các notebook svm_color_histogram / hog_svm / resnet18_gradcam làm Input của notebook so sánh rồi gọi
     ``load_results()`` (tự tìm trong ``/kaggle/input`` và ``/kaggle/working/results``).
     Lần chạy trùng ``run_name`` chỉ giữ bản mới nhất.
     """

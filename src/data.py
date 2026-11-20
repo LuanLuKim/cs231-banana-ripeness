@@ -77,7 +77,7 @@ def find_data_root(search: str | Path | list | None = None, max_depth: int = 4) 
             dirnames[:] = [] if depth >= max_depth else sorted(d for d in dirnames if d not in skip)
     raise FileNotFoundError(
         "Không tìm thấy manifest.csv. Trên Kaggle: Add Input -> Kaggle Dataset chứa output preprocessing, "
-        "hoặc chạy notebooks/02_preprocessing.ipynb trước. Hoặc truyền đường dẫn: find_data_root('/duong/dan').")
+        "hoặc chạy notebooks/preprocessing.ipynb trước. Hoặc truyền đường dẫn: find_data_root('/duong/dan').")
 
 
 def load_stats(root: str | Path) -> dict:
