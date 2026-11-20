@@ -1,8 +1,8 @@
 # Danh sách thí nghiệm của từng người. Notebook gọi:
-#   from banana_ripeness.experiment import load_experiments, run_grid
+#   from src.experiment import load_experiments, run_grid
 #   res = run_grid(load_experiments("configs/experiments.yaml", "luan"), data_root=DATA_ROOT)
 #
-# Mỗi mục = 1 mô hình (khoá `model`, xem banana_ripeness/models/__init__.py) + tham số của nó.
+# Mỗi mục = 1 mô hình (khoá `model`, xem src/models/__init__.py) + tham số của nó.
 # Giá trị dạng list được tổ hợp hết (vd. 2 kernel x 2 không gian màu x 2 mask = 8 cấu hình).
 # `schemes` / `seeds` (tuỳ chọn) ghi đè mặc định của run_grid: schemes [mixed, external], seeds [42].
 # Tham số được chọn bằng GridSearchCV trên 5 fold theo nhóm của TẬP TRAIN (param_grid mặc định nằm trong code

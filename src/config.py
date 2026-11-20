@@ -5,7 +5,7 @@ trong thư mục ``configs/``. Code và notebook KHÔNG hard-code các giá tr�
 
 Ví dụ::
 
-    from banana_ripeness.config import load_config
+    from src.config import load_config
     cfg = load_config("configs/kaggle.yaml")
     cfg = load_config("configs/kaggle.yaml", output_dir="/tmp/out")   # ghi đè 1 trường
 """

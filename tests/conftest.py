@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import pytest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))   # thư mục gốc repo -> import src.*
 
 # (tên thư mục gốc, màu RGB) theo từng dataset giả
 FAKE = {
@@ -45,8 +45,8 @@ def make_fake(root: Path, n_per_class: int = 30, seed: int = 0) -> dict:
 @pytest.fixture(scope="session")
 def prepped(tmp_path_factory):
     """(cfg, PreprocessResult) sau khi chạy preprocessing trên dữ liệu giả."""
-    from banana_ripeness.config import load_config
-    from banana_ripeness.preprocessing import run_preprocessing
+    from src.config import load_config
+    from src.preprocessing import run_preprocessing
 
     root = tmp_path_factory.mktemp("fake")
     dirs = make_fake(root / "raw")

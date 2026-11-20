@@ -15,14 +15,14 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT))   # thư mục gốc repo -> import src.*
 if hasattr(sys.stdout, "reconfigure"):          # console Windows (cp1252) không in được tiếng Việt
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 import yaml  # noqa: E402
 
-from banana_ripeness.experiment import compare_table, load_experiments, run_grid  # noqa: E402
+from src.experiment import compare_table, load_experiments, run_grid  # noqa: E402
 
 
 def parse_set(items: list[str]) -> dict:

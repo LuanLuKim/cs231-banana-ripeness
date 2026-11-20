@@ -17,8 +17,8 @@ Cả 3 mô hình dùng **chung** dữ liệu đã tiền xử lý, chung cách c
 configs/
   kaggle.yaml          đường dẫn 3 dataset trên Kaggle + tham số preprocessing
   experiments.yaml     danh sách thí nghiệm của từng người (luan / nguyen / quynh)
-src/banana_ripeness/
-  config.py            tham số chung
+src/                   package Python: import bằng `from src.xxx import ...` (thêm THƯ MỤC GỐC repo vào sys.path)
+  config.py            định nghĩa tham số + giá trị mặc định (giá trị cụ thể nằm ở configs/*.yaml)
   data.py              đọc manifest + ảnh + mask, find_data_root()
   preprocessing/       thu thập, loại trùng, chia tập, tách nền Otsu, lưu output
   features/            color_histogram.py (Luân), hog.py (khung Nguyên), cache.py
@@ -54,15 +54,15 @@ git archive --format=zip -o cs231-code.zip HEAD src configs scripts
 ```
 
 Kaggle → Datasets → New Dataset → upload `cs231-code.zip` (Kaggle tự giải nén). Trong notebook: Add Input
-dataset này cùng dataset output preprocessing. Cell setup tự tìm `src/banana_ripeness/` trong `/kaggle/input`
+dataset này cùng dataset output preprocessing. Cell setup tự tìm thư mục `src/` (package, có `__init__.py`) trong `/kaggle/input`
 (Colab: upload vào `/content`), chép sang `/tmp` rồi import; không cần Internet. Đổi code thì upload
 **New Version** của dataset code. Muốn ép một nguồn: đặt `CODE_SOURCE = "upload"` hoặc `"git"` trong cell setup.
 
 ## Dùng trong notebook
 
 ```python
-from banana_ripeness.data import find_data_root, load_manifest
-from banana_ripeness.experiment import run_experiment, run_grid, load_experiments, load_results, compare_table
+from src.data import find_data_root, load_manifest
+from src.experiment import run_experiment, run_grid, load_experiments, load_results, compare_table
 
 DATA_ROOT = find_data_root()                    # tự tìm manifest.csv trong /kaggle/input
 df = load_manifest(DATA_ROOT)

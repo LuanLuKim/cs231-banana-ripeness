@@ -14,7 +14,7 @@ Vì vậy mỗi người chạy notebook riêng, rồi notebook so sánh chỉ c
 
 Ví dụ::
 
-    from banana_ripeness.experiment import run_experiment, run_grid, load_results, compare_table
+    from src.experiment import run_experiment, run_grid, load_results, compare_table
     r = run_experiment("svm_color", data_root=DATA_ROOT, scheme="external", kernel="rbf", space="hsv")
     res = run_grid([{"model": "svm_color", "kernel": ["linear", "rbf"], "space": ["rgb", "hsv"]}],
                    data_root=DATA_ROOT, schemes=["mixed", "external"])

@@ -1,7 +1,7 @@
 """Kiểm thử preprocessing end-to-end trên dữ liệu giả (fixture ``prepped`` trong conftest). Chạy: pytest -q"""
 from pathlib import Path
 
-from banana_ripeness.data import get_split, load_manifest, read_mask
+from src.data import get_split, load_manifest, read_mask
 
 def test_manifest_and_files(prepped):
     cfg, res = prepped

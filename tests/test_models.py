@@ -6,10 +6,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from banana_ripeness.data import get_split, labels_of, load_manifest
-from banana_ripeness.experiment import (compare_table, expand_spec, load_experiments, load_results, load_run,
+from src.data import get_split, labels_of, load_manifest
+from src.experiment import (compare_table, expand_spec, load_experiments, load_results, load_run,
                                         plot_comparison, prediction_grid, run_experiment, run_grid)
-from banana_ripeness.models import REGISTRY, BaseRipenessModel, build_model, get_model_class, load_model
+from src.models import REGISTRY, BaseRipenessModel, build_model, get_model_class, load_model
 
 EXPERIMENTS = Path(__file__).resolve().parents[1] / "configs" / "experiments.yaml"
 

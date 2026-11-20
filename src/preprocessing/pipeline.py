@@ -6,7 +6,7 @@ Gọi từ dòng lệnh::
 
 hoặc từ notebook::
 
-    from banana_ripeness.preprocessing import run_preprocessing
+    from src.preprocessing import run_preprocessing
     result = run_preprocessing(load_config("configs/kaggle.yaml"))
 """
 from __future__ import annotations

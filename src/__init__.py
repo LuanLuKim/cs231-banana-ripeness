@@ -1,4 +1,4 @@
-"""banana_ripeness — phân loại 4 mức độ chín của chuối (đồ án CS231).
+"""src — package chính: phân loại 4 mức độ chín của chuối (đồ án CS231).
 
 Các module chính:
 

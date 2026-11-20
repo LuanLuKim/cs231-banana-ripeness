@@ -2,8 +2,8 @@
 import numpy as np
 import pytest
 
-from banana_ripeness.evaluation import bootstrap_std, compute_metrics, top_confusions
-from banana_ripeness.features import ColorHistogramExtractor, color_histogram, extract_features, feature_names, \
+from src.evaluation import bootstrap_std, compute_metrics, top_confusions
+from src.features import ColorHistogramExtractor, color_histogram, extract_features, feature_names, \
     histogram_stats
 
 
@@ -58,7 +58,7 @@ def test_histogram_stats_uniform():
 
 
 def test_feature_cache(prepped, tmp_path):
-    from banana_ripeness.data import load_manifest
+    from src.data import load_manifest
     cfg, _ = prepped
     df = load_manifest(cfg.output_dir).head(20)
     ex = ColorHistogramExtractor("hsv", 16, True, True)

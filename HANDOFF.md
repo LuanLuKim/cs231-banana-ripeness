@@ -28,7 +28,7 @@
 ## 2. Quyết định đã chốt
 
 1. **`.py` là nguồn chính, notebook chỉ import và gọi.** EDA vẫn là notebook (cần hình ngay trong file).
-2. Preprocessing là **package** `src/banana_ripeness/preprocessing`, chạy bằng `scripts/preprocess.py --config ...`
+2. Preprocessing là **package** `src/preprocessing`, chạy bằng `scripts/preprocess.py --config ...`
    hoặc gọi `run_preprocessing(cfg)` trong notebook. Cấu hình nằm ở `configs/*.yaml`, không hard-code.
 3. Output preprocessing **lưu thành 1 Kaggle Dataset** để cả nhóm gắn vào, dùng **chung một cách chia**.
 4. **Dữ liệu chia theo manifest** (`manifest.csv`), KHÔNG chia theo cấu trúc thư mục. Có 2 cách chia:
@@ -43,9 +43,9 @@
 
 | File | Trạng thái |
 |---|---|
-| `src/banana_ripeness/config.py` | xong: dataclass `Config`/`MaskConfig`, `load_config(yaml, **override)` |
+| `src/config.py` | xong: dataclass `Config`/`MaskConfig`, `load_config(yaml, **override)` |
 | `configs/kaggle.yaml`, `configs/local.yaml` | xong |
-| `src/banana_ripeness/data.py` | xong: `load_manifest`, `get_split(df, scheme, split)`, `read_rgb`, `read_mask`, `apply_mask` |
+| `src/data.py` | xong: `load_manifest`, `get_split(df, scheme, split)`, `read_rgb`, `read_mask`, `apply_mask` |
 | `preprocessing/collect.py` | xong: quét thư mục, ánh xạ nhãn, đối chiếu số ảnh với EDA, đọc MD5 + dHash 256 bit + dHash 64 bit + thumbnail |
 | `preprocessing/dedup.py` | xong: loại trùng MD5 / near-dup cùng nhãn, cặp khác nhãn để xem tay, gom nhóm, **so sánh hash 64 bit với 256 bit** |
 | `preprocessing/split.py` | xong: chia mixed + external, cv_fold, kiểm tra rò rỉ (assert) |

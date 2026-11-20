@@ -1,5 +1,5 @@
 # Cấu hình khi chạy trên Kaggle. Các giá trị không ghi ở đây lấy mặc định trong
-# src/banana_ripeness/config.py
+# src/config.py
 dataset_dirs:
   BananaID: /kaggle/input/datasets/anhnguyen7508/bananaid
   BananaImageBD: /kaggle/input/datasets/anhnguyen7508/bananaimagebd
