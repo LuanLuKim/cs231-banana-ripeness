@@ -5,7 +5,7 @@
 ## Cấu trúc
 
 ```
-configs/            cấu hình YAML (kaggle.yaml, local.yaml)
+configs/            cấu hình YAML (kaggle.yaml)
 src/banana_ripeness/
   config.py         tham số chung
   data.py           đọc manifest + ảnh + mask (mọi mô hình dùng chung)
@@ -20,8 +20,7 @@ HANDOFF.md          trạng thái + việc còn lại
 
 ```bash
 pip install -r requirements.txt
-python scripts/preprocess.py --config configs/kaggle.yaml     # trên Kaggle
-python scripts/preprocess.py --config configs/local.yaml      # trên máy
+python scripts/preprocess.py --config configs/kaggle.yaml
 ```
 
 Trên Kaggle (bật Internet):

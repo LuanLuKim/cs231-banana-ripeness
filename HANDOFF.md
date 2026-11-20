@@ -4,6 +4,10 @@
 > Người dùng: **Luân** (Kim Luân), nhóm 3 người. Trả lời bằng **tiếng Việt**.
 > Thư mục làm việc trên máy: `D:\Luan\Study\CS231\DoAn\` (repo này nằm trong đó).
 > Tài khoản GitHub: **LuanLuKim**, tên repo đề xuất: `cs231-banana-ripeness`.
+>
+> **Quan trọng:** máy và GitHub chỉ giữ CODE. Mọi lần chạy thật (preprocessing, train) đều chạy trên **Kaggle**:
+> notebook Kaggle `git clone` repo → `sys.path.insert(0, 'cs231-banana-ripeness/src')` → import và gọi.
+> Không tải dataset về máy, không chạy train trên máy. Trên máy chỉ chạy `pytest` (dữ liệu giả).
 
 ## 1. Bối cảnh
 
