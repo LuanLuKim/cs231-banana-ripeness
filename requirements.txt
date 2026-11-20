@@ -1,0 +1,14 @@
+numpy
+pandas
+opencv-python-headless
+scikit-learn
+scikit-image
+scipy
+matplotlib
+pyyaml
+tqdm
+joblib
+pytest
+# chỉ cần cho ResNet18 + Grad-CAM
+torch
+torchvision

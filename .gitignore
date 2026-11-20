@@ -1,0 +1,28 @@
+# dữ liệu & output nặng
+data/
+outputs/
+*.zip
+*.npz
+*.pkl
+*.joblib
+*.pt
+*.pth
+reports/**/*.png
+!reports/figures/*.png
+
+# python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# notebook
+.ipynb_checkpoints/
+
+# hệ điều hành / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

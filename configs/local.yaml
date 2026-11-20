@@ -1,0 +1,16 @@
+# Cấu hình khi chạy trên máy cá nhân. Giải nén 3 dataset vào data/raw/ (đã bị .gitignore).
+dataset_dirs:
+  BananaID: data/raw/bananaid
+  BananaImageBD: data/raw/bananaimagebd
+  BananaRipeness_GitHub: data/raw/bananaripeness-github
+
+output_dir: data/preprocessed
+
+eda_counts:
+  BananaID: 1960
+  BananaImageBD: 820
+  BananaRipeness_GitHub: 3495
+
+external_dataset: BananaImageBD
+seed: 42
+image_size: 224

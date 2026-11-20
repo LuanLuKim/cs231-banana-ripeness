@@ -1,0 +1,18 @@
+# Cấu hình khi chạy trên Kaggle. Các giá trị không ghi ở đây lấy mặc định trong
+# src/banana_ripeness/config.py
+dataset_dirs:
+  BananaID: /kaggle/input/datasets/anhnguyen7508/bananaid
+  BananaImageBD: /kaggle/input/datasets/anhnguyen7508/bananaimagebd
+  BananaRipeness_GitHub: /kaggle/input/datasets/kimlunl/bananaripeness-github
+
+output_dir: /kaggle/working/banana_preprocessed
+
+# Số ảnh mà notebook EDA đếm được, để kiểm tra bước thu thập không lấy sai thư mục
+eda_counts:
+  BananaID: 1960
+  BananaImageBD: 820
+  BananaRipeness_GitHub: 3495
+
+external_dataset: BananaImageBD
+seed: 42
+image_size: 224
