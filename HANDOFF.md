@@ -3,7 +3,9 @@
 > File này để Claude (bản desktop, có quyền vào thư mục máy) đọc và làm tiếp.
 > Người dùng: **Luân** (Kim Luân), nhóm 3 người. Trả lời bằng **tiếng Việt**.
 > Thư mục làm việc trên máy: `D:\Luan\Study\CS231\DoAn\` (repo này nằm trong đó).
-> Tài khoản GitHub: **LuanLuKim**, tên repo đề xuất: `cs231-banana-ripeness`.
+> GitHub: **https://github.com/LuanLuKim/cs231-banana-ripeness** (public). Thành viên: Nguyên `nguyenanhnguyen`,
+> Quỳnh `DontMadWhenBad` (quyền write). Commit đứng tên **LuanLuKim <kimluanlu95@gmail.com>**, không thêm co-author.
+> **Phạm vi Claude:** chỉ viết code phần của Luân; phần Nguyên/Quỳnh chỉ là khung (`TODO(Nguyên)`, `TODO(Quỳnh)`).
 >
 > **Quan trọng:** máy và GitHub chỉ giữ CODE. Mọi lần chạy thật (preprocessing, train) đều chạy trên **Kaggle**:
 > notebook Kaggle `git clone` repo → `sys.path.insert(0, 'cs231-banana-ripeness/src')` → import và gọi.
@@ -51,7 +53,19 @@
 | `preprocessing/reports.py` | xong: lưới cặp ảnh, lưới QA mask |
 | `preprocessing/pipeline.py` | xong: `run_preprocessing(cfg)` → `PreprocessResult` (manifest, stats, bảng, hình, **danh sách cảnh báo**) |
 | `scripts/preprocess.py` | xong (trả mã thoát 1 nếu có cảnh báo) |
-| `tests/test_preprocessing.py` | xong, **2 test pass** trên dữ liệu giả |
+| `tests/test_preprocessing.py` | xong (fixture dữ liệu giả chuyển sang `tests/conftest.py`) |
+| `features/color_histogram.py` | xong: 66 chiều (16 bin x 3 + 6 thống kê x 3), `feature_names`, `feature_summary`, `plot_color_features` |
+| `features/cache.py` | xong: `extract_features` cache npz theo `image_id`, tách theo dấu vân tay `config_used.yaml` |
+| `models/base.py` | xong: `BaseRipenessModel`, `ImageFeatureModel` (GridSearchCV + PredefinedSplit(cv_fold), 4 độ đo CV) |
+| `models/svm_color.py` | xong: `ColorHistogramSVM` (linear/rbf), `ColorHistogramKNN` |
+| `models/hog_svm.py`, `features/hog.py` | **khung** cho Nguyên (`NotImplementedError` ở phần lõi) |
+| `models/resnet18.py`, `models/gradcam.py` | **khung** cho Quỳnh; có sẵn `train_mean_std()`, `train_class_weight()`, `load_image`, `overlay` |
+| `evaluation.py` | xong: `compute_metrics`, `bootstrap_std`, `plot_confusion_matrix`, `top_confusions`, `results_table` |
+| `experiment.py` | xong: `run_experiment`, `run_grid` (resume, bỏ lần đã chạy), `load_results` (gộp mọi result.json), `summarize_runs` (std giữa seed), `compare_table`, `plot_comparison`, `best_run` (chọn theo val), `prediction_grid` |
+| `configs/experiments.yaml` | xong: luan = 8 SVM + 4 KNN; nguyen/quynh = ví dụ |
+| `scripts/train.py`, `scripts/compare.py` | xong |
+| `notebooks/02, 10, 20, 30, 90` | xong (10 và 90 đã chạy thử trên dữ liệu giả); `01_eda` + `legacy/` chép từ notebook cũ |
+| `tests/` | **15 test pass** (`pytest -q`, ~1.5 phút) |
 
 Output của preprocessing (`cfg.output_dir`):
 ```
@@ -68,38 +82,11 @@ mask_fallback, hue_thumb, hue_masked, md5, w, h, src_folder, src_path`.
 
 ## 4. Việc còn lại (theo thứ tự)
 
-1. **Dựng repo trên máy**: chép thư mục này vào `D:\Luan\Study\CS231\DoAn\` (thư mục cũ tên `banana`; được phép đổi tên
-   thành `cs231-banana-ripeness`). Chuyển notebook EDA cũ thành `notebooks/01_eda.ipynb`, notebook preprocessing cũ thành
-   `notebooks/legacy/cs231-r12-data-preprocessing.ipynb` (giữ để đối chiếu, không xoá).
-   Tạo repo GitHub: `gh repo create LuanLuKim/cs231-banana-ripeness --private --source . --push`
-   (người dùng tự đăng nhập `gh auth login`, Claude không nhập mật khẩu hay token).
-2. **`notebooks/02_preprocessing.ipynb`**: cell setup (thêm `src/` vào `sys.path`, hoặc `git clone` trên Kaggle),
-   `run_preprocessing(load_config("configs/kaggle.yaml"))`, hiển thị `result.tables[...]`, các ảnh trong
-   `result.figures`, in `result.warnings`.
-3. **`src/banana_ripeness/features/color_histogram.py`**: `color_histogram(rgb, mask=None, space="rgb"|"hsv", bins=16)`
-   - histogram 1D mỗi kênh trên pixel trong mask, chuẩn hoá tổng = 1 → 3×bins chiều (16 bin → 48 chiều).
-   - Thống kê mỗi kênh, tính từ histogram 256 bin với z ∈ [0,1]: mean, std, **skewness** (μ3/σ³), **energy/uniformity**
-     Σp², **smoothness** R = 1 − 1/(1+σ²), entropy → 6×3 = 18 chiều. Tổng 66 chiều. Nguồn: Gonzalez & Woods,
-     *Digital Image Processing*, mục mô tả kết cấu bằng thống kê (statistical moments).
-   - HSV của OpenCV: H ∈ [0,180), S, V ∈ [0,256). Trả về kèm `feature_names()` để giải thích trên slide.
-   - Cache đặc trưng theo `image_id` (npz) để các thí nghiệm không tính lại.
-4. **`src/banana_ripeness/models/base.py`**: `BaseRipenessModel(ABC)` có `fit(train_df, val_df=None)`, `predict(df)`,
-   `evaluate(df)`, `save/load`. Có thêm `ImageFeatureModel` (đặc trưng + sklearn Pipeline[StandardScaler, clf]):
-   chọn tham số bằng `GridSearchCV(cv=PredefinedSplit(train_df.cv_fold_<scheme>), scoring="f1_macro")`, nên tham số
-   được chọn **trong train, theo nhóm**. Std lấy từ `std_test_score` của 5 fold ở tham số tốt nhất, thêm bootstrap std trên test.
-5. **`models/svm_color.py`** (phần của Luân): `ColorHistogramSVM(kernel="linear"|"rbf", space, use_mask, bins)`,
-   lưới tham số: linear C ∈ {0.01,0.1,1,10,100}; rbf C ∈ {0.1,1,10,100} × gamma ∈ {"scale",0.001,0.01,0.1,1};
-   `class_weight="balanced"`. Thêm `ColorHistogramKNN` (k ∈ {1,3,5,7,9,15}) làm mốc.
-6. **`models/hog_svm.py`** (khung cho Nguyên) và **`models/resnet18.py` + `gradcam.py`** (khung cho Quỳnh): kế thừa
-   `BaseRipenessModel`, chạy được với tham số mặc định, ghi rõ "người phụ trách chỉnh". ResNet: dùng `stats.json`
-   (mean/std, class_weight), early stopping theo val macro-F1. Đã kiểm tra được là PyTorch cài được để test.
-7. **`src/banana_ripeness/evaluation.py`**: `compute_metrics` (accuracy, precision/recall/F1 macro, báo cáo theo lớp,
-   ma trận nhầm lẫn), `bootstrap_std`, `plot_confusion_matrix`, `results_table` → `reports/results_*.csv`.
-8. **`notebooks/10_svm_color_histogram.ipynb`**: bảng {RGB, HSV} × {linear, RBF} × {có, không mask} + KNN; trên
-   `split_mixed` (test) và `split_external` (external = BananaImageBD); ma trận nhầm lẫn của mô hình tốt nhất;
-   vài ảnh demo đoán đúng + phân tích nhầm Half_Ripe ↔ Ripe. Notebook chỉ import và gọi.
-9. `20_hog_svm.ipynb`, `30_resnet18_gradcam.ipynb`: khung tương tự cho Nguyên và Quỳnh.
-10. Test cho đặc trưng/mô hình (`tests/`), cập nhật README, commit.
+1. **Chạy `02_preprocessing` trên Kaggle**, lưu output thành Kaggle Dataset (vd. `banana-preprocessed`), xem cảnh báo
+   + `reports/mask_qa.png`, `hash64_disagreement_review.png` (mục 5).
+2. **Chạy `10_svm_color_histogram` trên Kaggle** (Luân) → Save Version. Lấy bảng cho slide 8.
+3. Nguyên / Quỳnh hoàn thiện khung (issue #1, #2 trên GitHub) rồi chạy `20_…`, `30_…`.
+4. `90_compare_results`: Add Input = output 3 notebook → bảng chung + biểu đồ → commit `reports/*.csv` nhỏ.
 
 ## 5. Vấn đề dữ liệu CẦN BÁO NHÓM SỚM
 
@@ -119,4 +106,4 @@ mask_fallback, hue_thumb, hue_masked, md5, w, h, src_folder, src_path`.
 
 - Không commit ảnh/dữ liệu (`.gitignore`), chỉ commit code + `reports/*.csv|png` nhỏ.
 - Seed 42 ở mọi nơi. Tên biến/hàm tiếng Anh, chú thích và in ra màn hình bằng tiếng Việt.
-- Chạy test: `pytest -q` (dữ liệu giả, khoảng 6 giây).
+- Chạy test: `pytest -q` (dữ liệu giả, khoảng 1.5 phút). Trên máy dùng `.venv` (đã gitignore).
