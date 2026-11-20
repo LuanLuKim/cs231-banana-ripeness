@@ -47,6 +47,17 @@ Mọi lần chạy thật đều trên Kaggle. Notebook nào cũng mở đầu b
 
 Sửa code → push lên GitHub → chạy lại cell setup (tự `git pull`) là notebook dùng code mới.
 
+**Không dùng git — upload thẳng code `.py`:** nén `src/` + `configs/` (+ `scripts/` nếu cần):
+
+```bash
+git archive --format=zip -o cs231-code.zip HEAD src configs scripts
+```
+
+Kaggle → Datasets → New Dataset → upload `cs231-code.zip` (Kaggle tự giải nén). Trong notebook: Add Input
+dataset này cùng dataset output preprocessing. Cell setup tự tìm `src/banana_ripeness/` trong `/kaggle/input`
+(Colab: upload vào `/content`), chép sang `/tmp` rồi import; không cần Internet. Đổi code thì upload
+**New Version** của dataset code. Muốn ép một nguồn: đặt `CODE_SOURCE = "upload"` hoặc `"git"` trong cell setup.
+
 ## Dùng trong notebook
 
 ```python
