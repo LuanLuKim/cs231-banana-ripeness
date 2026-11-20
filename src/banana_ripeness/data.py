@@ -52,6 +52,34 @@ def load_manifest(root: str | Path) -> pd.DataFrame:
     return df
 
 
+def find_data_root(search: str | Path | list | None = None, max_depth: int = 4) -> Path:
+    """Tìm thư mục chứa ``manifest.csv`` (output preprocessing).
+
+    Biến môi trường ``BANANA_DATA_ROOT`` (nếu đặt) được ưu tiên.
+    Mặc định tìm trong ``/kaggle/input`` (Kaggle Dataset đã gắn), ``/kaggle/working``, ``/content``
+    (Colab), ``/content/drive/MyDrive`` và ``outputs/``. Không đi vào ``images/``, ``masks/``.
+    """
+    import os
+    if search is None and os.environ.get("BANANA_DATA_ROOT"):
+        search = os.environ["BANANA_DATA_ROOT"]
+    roots = [Path(p) for p in ([search] if isinstance(search, (str, Path)) else search)] if search else [
+        Path("/kaggle/input"), Path("/kaggle/working"), Path("/content"), Path("/content/drive/MyDrive"),
+        Path("outputs")]
+    skip = {"images", "masks", "reports", "cache", "results", ".git"}
+    for base in roots:
+        if not base.exists():
+            continue
+        base_depth = len(base.parts)
+        for dirpath, dirnames, filenames in os.walk(base):
+            if "manifest.csv" in filenames and "stats.json" in filenames:
+                return Path(dirpath)
+            depth = len(Path(dirpath).parts) - base_depth
+            dirnames[:] = [] if depth >= max_depth else sorted(d for d in dirnames if d not in skip)
+    raise FileNotFoundError(
+        "Không tìm thấy manifest.csv. Trên Kaggle: Add Input -> Kaggle Dataset chứa output preprocessing, "
+        "hoặc chạy notebooks/02_preprocessing.ipynb trước. Hoặc truyền đường dẫn: find_data_root('/duong/dan').")
+
+
 def load_stats(root: str | Path) -> dict:
     return json.loads((Path(root) / "stats.json").read_text(encoding="utf-8"))
 
@@ -91,5 +119,5 @@ def apply_mask(rgb: np.ndarray, mask: np.ndarray, fill: int = 0) -> np.ndarray:
     return out
 
 
-__all__ = ["CLASS_NAMES", "SCHEMES", "SPLITS", "split_col", "fold_col", "load_manifest",
+__all__ = ["CLASS_NAMES", "SCHEMES", "SPLITS", "split_col", "fold_col", "load_manifest", "find_data_root",
            "load_stats", "get_split", "labels_of", "read_rgb", "read_mask", "apply_mask"]

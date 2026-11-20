@@ -10,6 +10,9 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+if hasattr(sys.stdout, "reconfigure"):          # console Windows (cp1252) không in được tiếng Việt
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 from banana_ripeness.config import load_config  # noqa: E402
 from banana_ripeness.preprocessing import run_preprocessing  # noqa: E402
