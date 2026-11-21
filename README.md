@@ -5,7 +5,7 @@
 | Người | Mô hình | Trạng thái |
 |---|---|---|
 | Luân | Histogram màu RGB/HSV (66 chiều) + SVM tuyến tính / RBF, KNN làm mốc | xong code |
-| Nguyên | HOG + SVM | khung (`TODO(Nguyên)`) |
+| Nguyên | HOG (từng kênh R, G, B hoặc xám) + SVM tuyến tính / RBF | xong code |
 | Quỳnh | ResNet18 + Grad-CAM | khung (`TODO(Quỳnh)`) |
 
 Cả 3 mô hình dùng **chung** dữ liệu đã tiền xử lý, chung cách chia, chung hàm đánh giá và lưu kết quả cùng
@@ -41,9 +41,9 @@ src/                   package Python: import bằng `from src.xxx import ...` (
   config.py            định nghĩa tham số + giá trị mặc định (giá trị cụ thể nằm ở configs/*.yaml)
   data.py              đọc manifest + ảnh + mask, find_data_root()
   preprocessing/       thu thập, loại trùng, chia tập, tách nền Otsu, lưu output
-  features/            color_histogram.py (Luân), hog.py (khung Nguyên), cache.py
+  features/            color_histogram.py (Luân), hog.py (Nguyên), cache.py
   models/              base.py (wrapper chung), svm_color.py (Luân),
-                       hog_svm.py (khung Nguyên), resnet18.py + gradcam.py (khung Quỳnh)
+                       hog_svm.py (Nguyên), resnet18.py + gradcam.py (khung Quỳnh)
   evaluation.py        accuracy, precision/recall/F1 macro, bootstrap std, ma trận nhầm lẫn
   experiment.py        run_experiment / run_grid / load_results / compare_table
 scripts/               preprocess.py, train.py, compare.py (cùng code với notebook)
