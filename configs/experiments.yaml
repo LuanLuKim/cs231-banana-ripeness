@@ -21,11 +21,11 @@ experiments:
       use_mask: [true, false]
       bins: 16
 
-  # ---------------- Nguyên: HOG (khung, Nguyên tự sửa) ----------------
+  # ---------------- Nguyên: HOG + SVM ----------------
   nguyen:
     - model: hog_svm
-      kernel: linear
-      color_mode: gray
+      kernel: [linear, rbf]
+      color_mode: [gray, rgb]     # rgb = HOG riêng từng kênh R, G, B rồi nối
       use_mask: [true, false]
 
   # ---------------- Quỳnh: ResNet18 + Grad-CAM (khung, Quỳnh tự sửa) ----------------
