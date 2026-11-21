@@ -1,18 +1,8 @@
-"""KHUNG — HOG + SVM.
+"""HOG + SVM (tuyến tính / RBF).
 
->>> NGƯỜI PHỤ TRÁCH: Nguyên. File này chỉ là khung, Nguyên tự cài đặt phần TODO. <<<
-
-Kế thừa ``ImageFeatureModel`` nên ĐÃ CÓ SẴN (không cần viết lại):
-  trích đặc trưng + cache, StandardScaler, GridSearchCV theo fold nhóm (``cv_fold_<scheme>``),
-  predict / evaluate / save / load, và lưu kết quả cùng định dạng với SVM màu của Luân
-  (``run_experiment`` / ``run_grid`` -> ``results/<run_name>/result.json``) để vào bảng so sánh chung.
-
-Nguyên chỉ cần:
-  1. Cài đặt ``HogExtractor`` trong ``features/hog.py``.
-  2. Chọn bộ phân loại trong ``make_estimator`` và lưới tham số trong ``default_param_grid``.
-  3. Khai báo thí nghiệm trong ``configs/experiments.yaml`` (mục ``nguyen``).
-
-Xem ``models/svm_color.py`` làm ví dụ hoàn chỉnh.
+Cortes, C., & Vapnik, V. (1995). Support-vector networks. Machine Learning, 20(3), 273-297.
+Đặc trưng: ``features/hog.py``. Trích đặc trưng + cache, StandardScaler, GridSearchCV theo fold nhóm, đánh giá và
+lưu kết quả do ``ImageFeatureModel`` (``base.py``) lo.
 """
 from __future__ import annotations
 
@@ -26,7 +16,7 @@ class HogSVM(ImageFeatureModel):
     name = "hog_svm"
 
     def __init__(self, kernel: str = "linear", orientations: int = 9, pixels_per_cell: int = 16,
-                 cells_per_block: int = 2, resize: int = 128, color_mode: str = "gray", use_mask: bool = True,
+                 cells_per_block: int = 2, resize: int = 128, color_mode: str = "rgb", use_mask: bool = True,
                  class_weight: str | None = "balanced", **kw):
         # kw: scheme, seed, param_grid, n_jobs, cache_dir, verbose (xem ImageFeatureModel)
         super().__init__(**kw)
@@ -41,12 +31,13 @@ class HogSVM(ImageFeatureModel):
                             color_mode=self.color_mode, use_mask=self.use_mask)
 
     def make_estimator(self):
-        # TODO(Nguyên): trả về bộ phân loại sklearn, vd. LinearSVC / SVC(kernel=self.kernel, ...)
-        raise NotImplementedError("HogSVM.make_estimator chưa cài đặt (phần của Nguyên)")
+        from sklearn.svm import SVC
+        return SVC(kernel=self.kernel, class_weight=self.class_weight, random_state=self.seed, cache_size=500)
 
     def default_param_grid(self) -> dict[str, list]:
-        # TODO(Nguyên): lưới tham số cho bộ phân loại (khoá KHÔNG có tiền tố "clf__"), vd. {"C": [...]}
-        raise NotImplementedError("HogSVM.default_param_grid chưa cài đặt (phần của Nguyên)")
+        if self.kernel == "linear":
+            return {"C": [0.01, 0.1, 1, 10]}
+        return {"C": [1, 10, 100], "gamma": ["scale", 1e-4, 1e-3]}
 
     def feature_params(self) -> dict[str, Any]:
         """Tham số ghi vào bảng kết quả."""
