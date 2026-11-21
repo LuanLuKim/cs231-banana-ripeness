@@ -1,36 +1,39 @@
-"""KHUNG — đặc trưng HOG (Histogram of Oriented Gradients).
+"""Đặc trưng HOG (Histogram of Oriented Gradients).
 
->>> NGƯỜI PHỤ TRÁCH: Nguyên. File này chỉ là khung, Nguyên tự cài đặt phần TODO. <<<
+Dalal, N., & Triggs, B. (2005). Histograms of oriented gradients for human detection. CVPR.
 
-Tài liệu: Dalal, N., & Triggs, B. (2005). Histograms of oriented gradients for human detection. CVPR.
+Ảnh RGB (224, 224, 3) + mask -> nền thành trắng (nếu ``use_mask``) -> resize ``resize`` x ``resize`` -> HOG
+(``skimage.feature.hog``, chuẩn hoá block L2-Hys). ``color_mode``:
 
-Hợp đồng (contract) để dùng được với ``extract_features`` (cache theo image_id) và ``ImageFeatureModel``:
+- ``gray`` : HOG của ảnh xám.
+- ``rgb``  : HOG riêng từng kênh R, G, B rồi nối ("chia bin theo màu RGB"), số chiều gấp 3.
 
-- ``key``        : chuỗi DUY NHẤT theo bộ tham số (đổi tham số -> đổi key -> cache mới).
-- ``needs_mask`` : True nếu cần đọc mask (``extract_features`` sẽ truyền mask bool vào ``__call__``).
-- ``__call__(rgb, mask)`` : ảnh RGB uint8 (224, 224, 3) + mask bool (224, 224) hoặc None
-                            -> vector float32 1 chiều, độ dài cố định.
-- ``names()``    : tên từng chiều (để ghi số chiều trên slide).
-
-Gợi ý: ``skimage.feature.hog`` (đã có trên Kaggle/Colab); "chia bin theo màu RGB" Nguyên tự chốt
-(vd. HOG từng kênh R, G, B rồi nối; hoặc nối thêm ``color_histogram`` trong ``color_histogram.py``).
+Số chiều mỗi kênh = (resize // pixels_per_cell - cells_per_block + 1)^2 * cells_per_block^2 * orientations
+(mặc định 128, 16, 2, 9 -> 7^2 * 4 * 9 = 1764; ``rgb`` -> 5292).
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
 
+import cv2
 import numpy as np
+from skimage.feature import hog
+
+CHANNELS = {"gray": ("gray",), "rgb": ("R", "G", "B")}
 
 
 @dataclass(frozen=True)
 class HogExtractor:
-    # TODO(Nguyên): thêm/bớt tham số theo cách làm đã chốt
     orientations: int = 9
     pixels_per_cell: int = 16
     cells_per_block: int = 2
     resize: int = 128
-    color_mode: str = "gray"
+    color_mode: str = "rgb"
     use_mask: bool = True
+
+    def __post_init__(self):
+        if self.color_mode not in CHANNELS:
+            raise ValueError(f"color_mode phải là {sorted(CHANNELS)}, nhận '{self.color_mode}'")
 
     @property
     def key(self) -> str:
@@ -42,12 +45,19 @@ class HogExtractor:
         return self.use_mask
 
     def __call__(self, rgb: np.ndarray, mask: np.ndarray | None = None) -> np.ndarray:
-        # TODO(Nguyên): tính HOG cho 1 ảnh, trả về np.float32 1 chiều
-        raise NotImplementedError("HogExtractor.__call__ chưa cài đặt (phần của Nguyên)")
+        if self.use_mask and mask is not None and mask.any():
+            rgb = np.where(mask[..., None], rgb, 255).astype(np.uint8)      # nền -> trắng
+        img = cv2.resize(rgb, (self.resize, self.resize), interpolation=cv2.INTER_AREA)
+        planes = [cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)] if self.color_mode == "gray" else [img[..., c] for c in range(3)]
+        return np.concatenate([hog(p, orientations=self.orientations,
+                                   pixels_per_cell=(self.pixels_per_cell,) * 2,
+                                   cells_per_block=(self.cells_per_block,) * 2, block_norm="L2-Hys")
+                               for p in planes]).astype(np.float32)
 
     def names(self) -> list[str]:
-        # TODO(Nguyên): danh sách tên từng chiều, len == số chiều vector
-        raise NotImplementedError("HogExtractor.names chưa cài đặt (phần của Nguyên)")
+        per_channel = (self.resize // self.pixels_per_cell - self.cells_per_block + 1) ** 2 \
+            * self.cells_per_block ** 2 * self.orientations
+        return [f"hog_{ch}_{i}" for ch in CHANNELS[self.color_mode] for i in range(per_channel)]
 
 
 __all__ = ["HogExtractor"]
