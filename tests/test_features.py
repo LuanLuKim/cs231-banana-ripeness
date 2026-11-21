@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 
 from src.evaluation import bootstrap_std, compute_metrics, top_confusions
-from src.features import ColorHistogramExtractor, color_histogram, extract_features, feature_names, \
+from src.features import ColorHistogramExtractor, HogExtractor, color_histogram, extract_features, feature_names, \
     histogram_stats
 
 
@@ -87,3 +87,14 @@ def test_metrics_match_sklearn():
     assert 0 < b["f1_macro_std"] < 0.1
     assert b["f1_macro_ci_low"] < m["f1_macro"] < b["f1_macro_ci_high"]
     assert len(top_confusions(m["confusion_matrix"], k=3)) == 3
+
+
+@pytest.mark.parametrize("mode,dims", [("gray", 1764), ("rgb", 5292)])
+def test_hog_dims_and_mask(mode, dims):
+    img, mask = _img()
+    img[~mask] = np.random.default_rng(0).integers(0, 255, (int((~mask).sum()), 3))    # nền nhiễu: mask phải có tác dụng
+    ex = HogExtractor(color_mode=mode)
+    f = ex(img, mask)
+    assert f.dtype == np.float32 and f.shape == (dims,) and len(ex.names()) == dims
+    assert not np.allclose(f, HogExtractor(color_mode=mode, use_mask=False)(img, mask))   # mask đổi đặc trưng
+    assert ex.key != HogExtractor(color_mode=mode, pixels_per_cell=32).key

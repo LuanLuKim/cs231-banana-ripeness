@@ -82,12 +82,21 @@ def test_grid_and_shared_results(data, tmp_path):
     assert prediction_grid(run.predictions["test"], n=4, data_root=root) is not None
 
 
+def test_hog_svm_end_to_end(data, tmp_path):
+    root, df = data
+    r = run_experiment("hog_svm", df=df, data_root=root, scheme="mixed", kernel="linear", color_mode="rgb",
+                       param_grid={"C": [1]}, results_dir=tmp_path, n_jobs=1, cache_dir=tmp_path / "cache",
+                       n_boot=20, owner="test", verbose=False)
+    assert r.metrics["test"]["f1_macro"] > 0.3                    # HOG chỉ bắt hình dạng/biên, dữ liệu giả phân biệt bằng màu
+    assert json.loads((r.run_dir / "result.json").read_text(encoding="utf-8"))["fit_info"]["n_features"] == 5292
+
+
 def test_teammate_skeletons_registered_but_not_implemented(data, tmp_path):
     root, df = data
     for name in ("hog_svm", "resnet18"):
         assert issubclass(get_model_class(name), BaseRipenessModel)
     # khung chưa cài đặt -> run_grid báo lỗi từng cấu hình nhưng không dừng cả lưới
-    out = run_grid([{"model": "hog_svm"}, {"model": "resnet18", "epochs": 1}], df=df, data_root=root,
+    out = run_grid([{"model": "resnet18", "epochs": 1}], df=df, data_root=root,
                    schemes=["mixed"], results_dir=tmp_path, verbose=False)
     assert out.empty
     m = build_model("resnet18", scheme="external")
